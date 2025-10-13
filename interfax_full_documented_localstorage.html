@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sistema de Inspección Fitosanitaria</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, #d4edda 0%, #a3ca85 100%);
+      color: #264d00;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 20px 40px;
+    }
+    header {
+      background: #184d00;
+      width: 100%;
+      max-width: 1200px;
+      padding: 25px 40px;
+      border-radius: 10px 10px 0 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+      color: #e8f5e9;
+      text-align: center;
+      font-weight: 600;
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    nav {
+      background: #2e7d32;
+      width: 100%;
+      max-width: 1200px;
+      border-radius: 0 0 10px 10px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 12px 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      margin-bottom: 30px;
+    }
+    nav button {
+      background: #a5d6a7;
+      color: #184d00;
+      border: none;
+      margin: 8px 12px;
+      padding: 12px 22px;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.25s ease, transform 0.3s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      user-select: none;
+      font-size: 1rem;
+    }
+    nav button:hover {
+      background: #81c784;
+      transform: translateY(-3px) scale(1.05);
+      color: #e8f5e9;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+    nav button.active-btn {
+      background: #558b2f;
+      color: #e8f5e9;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.35);
+      transform: scale(1.1);
+    }
+    main {
+      width: 100%;
+      max-width: 900px;
+      background: #ffffffdd;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      border-radius: 15px;
+      padding: 30px 40px 40px;
+      overflow-x: hidden;
+      margin-bottom: 40px;
+      transition: all 0.3s ease;
+    }
+    section {
+      display: none;
+      animation: fadeIn 0.5s ease forwards;
+    }
+    section.active {
+      display: block;
+    }
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #2e7d32;
+      border-bottom: 3px solid #a5d6a7;
+      padding-bottom: 8px;
+      text-shadow: 1px 1px 1px #ddecd8;
+    }
+    form {
+      display: grid;
+      gap: 18px;
+    }
+    label {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #344d12;
+      margin-bottom: 6px;
+      display: block;
+      text-shadow: 0 2px 2px #d1f0c8;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid #a5d6a7;
+      background: #f3f9e7;
+      color: #2b3a09;
+      resize: vertical;
+      box-shadow: inset 1px 1px 5px #cadeb1;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+      outline-offset: 2px;
+      outline-color: transparent;
+      outline-style: solid;
+      outline-width: 3px;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #558b2f;
+      background: #e4f4b3;
+      outline-color: #558b2f;
+    }
+    input[type="submit"] {
+      width: fit-content;
+      font-weight: 700;
+      background: #558b2f;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 40px;
+      box-shadow: 0 6px 12px #4a7e29cc;
+      cursor: pointer;
+      align-self: center;
+      transition: background 0.4s ease, box-shadow 0.3s ease;
+      font-size: 1.1rem;
+    }
+    input[type="submit"]:hover {
+      background: #33691e;
+      box-shadow: 0 6px 20px #2b581dcc;
+      transform: translateY(-2px);
+    }
+    .hidden {
+      display: none;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 8px;
+    }
+    .checkbox-group label {
+      background: #d4edda;
+      color: #264d00;
+      padding: 10px 15px;
+      border-radius: 22px;
+      box-shadow: inset 1px 1px 4px #c5e1a5;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background-color 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .checkbox-group input[type="checkbox"] {
+      display: none;
+    }
+    .checkbox-group input[type="checkbox"]:checked + label {
+      background: #558b2f;
+      color: #e8f5e9;
+      border-color: #375a12;
+      box-shadow: 0 3px 8px #33691ecc;
+    }
+    @media (max-width: 720px) {
+      nav button {
+        font-size: 0.9rem;
+        padding: 10px 12px;
+        margin: 6px 8px;
+      }
+      main {
+        max-width: 100%;
+        padding: 25px 20px 35px;
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <!-- ENCABEZADO: título principal de la aplicación -->
+  <header>
+    Sistema de Inspección Fitosanitaria
+  </header>
+  <!-- NAVEGACIÓN: botones para moverse entre módulos -->
+  <nav>
+    <button class="active-btn" onclick="showSection('usuarios', this)">Gestión de Usuarios</button>
+    <button id="btnCultivos" class="hidden" onclick="showSection('cultivos', this)">Gestión de Cultivos</button>
+    <button id="btnPlagas" class="hidden" onclick="showSection('plagas', this)">Gestión de Plagas</button>
+    <button onclick="showSection('predios', this)">Gestión de Predios</button>
+    <button onclick="showSection('lugares', this)">Lugares de Producción</button>
+    <button onclick="showSection('lotes', this)">Gestión de Lotes</button>
+    <button onclick="showSection('informes', this)">Informes</button>
+      <button onclick="showSection('admin', this)">Administrador</button>
+</nav>
+  <!-- CONTENIDO PRINCIPAL: aquí se encuentran los formularios y secciones del sistema -->
+  <main>
+    <section id="usuarios" class="active">
+      <h2>Gestión de Usuarios</h2>
+      <form id="formUsuarios">
+        <label for="tipoUsuario">Tipo de usuario <sup>*</sup></label>
+        <select id="tipoUsuario" required>
+          <option value="">Seleccione tipo de usuario</option>
+          <option value="asistente">Asistente Técnico</option>
+          <option value="productor">Productor</option>
+          <option value="propietario">Propietario de Predios</option>
+        </select>
+        <label for="numIdUsuario">Número de identidad <sup>*</sup></label>
+        <input id="numIdUsuario" type="text" placeholder="Número de identidad (cédula o NIT)" pattern="\d{7,15}" title="Solo números, entre 7 y 15 dígitos" required />
+        <label for="nombreUsuario">Nombre completo <sup>*</sup></label>
+        <input id="nombreUsuario" type="text" placeholder="Nombre y apellidos" required />
+        <label for="direccionUsuario">Dirección</label>
+        <input id="direccionUsuario" type="text" placeholder="Dirección completa" />
+        <label for="telefonoUsuario">Teléfono</label>
+        <input id="telefonoUsuario" type="tel" placeholder="Número telefónico" pattern="\d{7,15}" title="Solo números, entre 7 y 15 dígitos" />
+        <label for="emailUsuario">Correo electrónico</label>
+        <input id="emailUsuario" type="email" placeholder="ejemplo@correo.com" />
+        <label for="tarjetaProfesional" id="labelTarjeta" class="hidden">Número de tarjeta profesional <sup>*</sup></label>
+        <input type="text" id="tarjetaProfesional" class="hidden" placeholder="Número de tarjeta profesional" pattern="\d{6,15}" title="Solo números, entre 6 y 15 dígitos" />
+        <input type="submit" value="Registrar Usuario" />
+      </form>
+    </section>
+    <section id="cultivos">
+      <h2>Gestión de Cultivos</h2>
+      <form id="formCultivos">
+        <label for="nombreCientifico">Nombre científico <sup>*</sup></label>
+        <input id="nombreCientifico" type="text" placeholder="Nombre científico (latín)" required />
+        <label for="nombresComunes">Nombres comunes</label>
+        <textarea id="nombresComunes" placeholder="Separar por comas"></textarea>
+        <label for="variedad">Variedad</label>
+        <input id="variedad" type="text" placeholder="Variedad del cultivo" />
+        <label for="cicloCultivo">Ciclo de cultivo <sup>*</sup></label>
+        <select id="cicloCultivo" required>
+          <option value="">Seleccione ciclo</option>
+          <option value="corto">Corto (menos de 2 años)</option>
+          <option value="medio">Medio (menos de 5 años)</option>
+          <option value="largo">Largo (más de 5 años)</option>
+        </select>
+        <label for="plagasAsociadas">Plagas asociadas</label>
+        <textarea id="plagasAsociadas" placeholder="Listar plagas que afectan al cultivo, separar por comas"></textarea>
+        <input type="submit" value="Registrar Cultivo" />
+      </form>
+    </section>
+    <section id="plagas">
+      <h2>Gestión de Plagas</h2>
+      <form id="formPlagas">
+        <label for="nombreCientificoPlaga">Nombre científico <sup>*</sup></label>
+        <input id="nombreCientificoPlaga" type="text" placeholder="Nombre científico de la plaga" required />
+        <label for="nombresComunesPlaga">Nombres comunes</label>
+        <textarea id="nombresComunesPlaga" placeholder="Separar por comas"></textarea>
+        <label for="cultivosAfectados">Cultivos afectados</label>
+        <textarea id="cultivosAfectados" placeholder="Listar cultivos afectados, separar por comas"></textarea>
+        <input type="submit" value="Registrar Plaga" />
+      </form>
+    </section>
+    <section id="predios">
+      <h2>Gestión de Predios</h2>
+      <form id="formPredios">
+        <label for="numPredial">Número predial <sup>*</sup></label>
+        <input id="numPredial" type="text" placeholder="Número predial (IGAC)" pattern="\d{5,15}" title="Solo números entre 5 y 15 dígitos" required />
+        <label for="nombrePredio">Nombre del predio</label>
+        <input id="nombrePredio" type="text" placeholder="Nombre del predio" />
+        <label for="departamento">Departamento <sup>*</sup></label>
+        <input id="departamento" type="text" placeholder="Departamento" required />
+        <label for="municipio">Municipio <sup>*</sup></label>
+        <input id="municipio" type="text" placeholder="Municipio" required />
+        <label for="vereda">Vereda</label>
+        <input id="vereda" type="text" placeholder="Vereda" />
+        <label for="direccionPredio">Dirección</label>
+        <input id="direccionPredio" type="text" placeholder="Dirección predio, km y vía" />
+        <label for="propietarioPredio">Propietario</label>
+        <input id="propietarioPredio" type="text" placeholder="Nombre del propietario" />
+        <label for="coordenadas">Coordenadas geográficas (latitud, longitud)</label>
+        <input id="coordenadas" type="text" placeholder="Ejemplo: 4.7110, -74.0721" pattern="[-+]?\d{1,2}\.\d+,\s?[-+]?\d{1,3}\.\d+" title="Formato: latitud, longitud" />
+        <label for="areaPredio">Área total (ha)</label>
+        <input id="areaPredio" type="number" min="0" step="0.01" placeholder="Área en hectáreas" />
+        <input type="submit" value="Registrar Predio" />
+      </form>
+    </section>
+    <section id="lugares">
+      <h2>Gestión de Lugares de Producción</h2>
+      <form id="formLugares">
+        <label for="nombreLugar">Nombre <sup>*</sup></label>
+        <input id="nombreLugar" type="text" placeholder="Nombre del lugar de producción" required />
+        <label for="ubicacionLugar">Ubicación</label>
+        <input id="ubicacionLugar" type="text" placeholder="Departamento, municipio y vereda" />
+        <label for="direccionLugar">Dirección</label>
+        <input id="direccionLugar" type="text" placeholder="Dirección del lugar" />
+        <label for="coordenadasLugar">Coordenadas</label>
+        <input id="coordenadasLugar" type="text" placeholder="Latitud, longitud" pattern="[-+]?\d{1,2}\.\d+,\s?[-+]?\d{1,3}\.\d+" title="Formato: latitud, longitud" />
+        <label for="productorLugar">Productor</label>
+        <input id="productorLugar" type="text" placeholder="Nombre del productor" />
+        <label for="asistenteLugar">Asistente Técnico</label>
+        <input id="asistenteLugar" type="text" placeholder="Nombre del asistente técnico" />
+        <label for="especiesVegetales">Especies vegetales cultivadas</label>
+        <textarea id="especiesVegetales" placeholder="Listado de especies vegetales, separar por comas"></textarea>
+        <label for="areasApoyo">Áreas de apoyo</label>
+        <textarea id="areasApoyo" placeholder="Acopio, residuos, insumos, otros"></textarea>
+        <label for="capacidadMaxima">Capacidad máxima por especie/ciclo (kg)</label>
+        <input id="capacidadMaxima" type="number" min="0" step="0.01" placeholder="Capacidad máxima anual o mensual" />
+        <label>Áreas identificadas obligatorias para inspección <sup>*</sup></label>
+        <div class="checkbox-group" id="areasIdentificadas">
+          <input type="checkbox" id="acopio" name="areas" value="acopio" required /><label for="acopio">Área de acopio</label>
+          <input type="checkbox" id="residuos" name="areas" value="residuos" required /><label for="residuos">Área de manejo de residuos vegetales afectados</label>
+          <input type="checkbox" id="insumos" name="areas" value="insumos" required /><label for="insumos">Área de almacenamiento de insumos agrícolas</label>
+          <input type="checkbox" id="dosificacion" name="areas" value="dosificacion" required /><label for="dosificacion">Área de dosificación y preparación de mezclas de plaguicidas</label>
+          <input type="checkbox" id="disposicion" name="areas" value="disposicion" required /><label for="disposicion">Área de disposición de residuos de mezclas y lavado de equipos</label>
+          <input type="checkbox" id="almacenamiento" name="areas" value="almacenamiento" required /><label for="almacenamiento">Área de almacenamiento de equipos y herramientas</label>
+          <input type="checkbox" id="sanitaria" name="areas" value="sanitaria" required /><label for="sanitaria">Área sanitaria y de lavamanos</label>
+        </div>
+        <label for="resultadoVisita">Resultado visita ICA</label>
+        <select id="resultadoVisita">
+          <option value="">Seleccione resultado</option>
+          <option value="aprobado">Aprobado</option>
+          <option value="aplazado">Aplazado</option>
+          <option value="rechazado">Rechazado</option>
+        </select>
+        <input type="submit" value="Registrar Lugar" />
+      </form>
+    </section>
+    <section id="lotes">
+      <h2>Gestión de Lotes</h2>
+      <form id="formLotes">
+        <label for="numLote">Número de lote <sup>*</sup></label>
+        <input id="numLote" type="text" placeholder="Número de lote" required />
+        <label for="areaLote">Área (ha)</label>
+        <input id="areaLote" type="number" min="0" step="0.01" placeholder="Área en hectáreas" />
+        <label for="cultivoLote">Cultivo</label>
+        <input id="cultivoLote" type="text" placeholder="Cultivo asociado" />
+        <label for="fechaSiembra">Fecha de siembra</label>
+        <input id="fechaSiembra" type="date" />
+        <label for="fechaEliminacion">Fecha de eliminación</label>
+        <input id="fechaEliminacion" type="date" />
+        <input type="submit" value="Registrar Lote" />
+      </form>
+    </section>
+    <section id="informes">
+      <h2>Registro de Informes Fitosanitarios</h2>
+      <form id="formInformes">
+        <label for="loteInforme">Número de lote</label>
+        <input id="loteInforme" type="text" placeholder="Número de lote" />
+        <label for="especieVegetalInforme">Especie vegetal</label>
+        <input id="especieVegetalInforme" type="text" placeholder="Especie vegetal" />
+        <label for="areaInforme">Área (ha)</label>
+        <input id="areaInforme" type="number" min="0" step="0.01" placeholder="Área en hectáreas" />
+        <label for="cantidadPlantas">Cantidad de plantas</label>
+        <input id="cantidadPlantas" type="number" min="0" placeholder="Número de plantas" />
+        <label for="estadoFenologico">Estado fenológico</label>
+        <input id="estadoFenologico" type="text" placeholder="Estado fenológico" />
+        <label>Datos por plaga asociada</label>
+        <div id="plagasInformesSection" style="margin-top: 8px; border: 1px solid #a5d6a7; padding: 15px; border-radius: 20px; background-color: #e9f3dc;">
+          <div class="plaga-inf" style="margin-bottom:10px;">
+            <label>Nombre plaga</label>
+            <input type="text" placeholder="Nombre de la plaga" />
+            <label>Cantidad de plantas infestadas</label>
+            <input type="number" min="0" placeholder="Cantidad infestada" />
+            <label>% de infestación</label>
+            <input type="number" min="0" max="100" placeholder="Porcentaje %" />
+          </div>
+        </div>
+        <input type="submit" value="Registrar Informe Fitosanitario" />
+      </form>
+    </section>
+  
+    <!-- ====== SECCIÓN: ADMINISTRADOR ====== -->
+    <!-- Panel para que el administrador consulte, actualice y borre informes guardados -->
+    <section id="admin">
+      <h2>Panel del Administrador</h2>
+      <p>En este panel se muestran todos los informes registrados (todos los campos del formulario).</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+        <button id="btnActualizarInformes" class="action" onclick="mostrarInformes()">Actualizar Tabla</button>
+        <button id="btnBorrarInformes" class="action" style="background:#c62828;" onclick="borrarInformes()">🗑️ Borrar todo</button>
+      </div>
+      <div style="overflow:auto;">
+        <table id="tablaInformesAdmin" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="padding:8px; border:1px solid #a5d6a7;">#</th>
+              <th style="padding:8px; border:1px solid #a5d6a7;">Lote</th>
+              <th style="padding:8px; border:1px solid #a5d6a7;">Especie</th>
+              <th style="padding:8px; border:1px solid #a5d6a7;">Área (ha)</th>
+              <th style="padding:8px; border:1px solid #a5d6a7;">Plantas</th>
+              <th style="padding:8px; border:1px solid #a5d6a7;">Estado fenológico</th>
+              <th style="padding:8px; border:1px solid #a5d6a7;">Plagas asociadas (nombre, cantidad, %)</th>
+              <th style="padding:8px; border:1px solid #a5d6a7;">Fecha registro</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    
+  </main>
+  <script>
+    function showSection(id, btn) {
+      document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      document.querySelectorAll("nav button").forEach(b => b.classList.remove("active-btn"));
+      btn.classList.add("active-btn");
+    }
+    const tipoUsuario = document.getElementById("tipoUsuario");
+    const tarjetaProfesional = document.getElementById("tarjetaProfesional");
+    const labelTarjeta = document.getElementById("labelTarjeta");
+    const btnCultivos = document.getElementById("btnCultivos");
+    const btnPlagas = document.getElementById("btnPlagas");
+    tipoUsuario.addEventListener("change", function () {
+      if (this.value === "asistente") {
+        tarjetaProfesional.classList.remove("hidden");
+        labelTarjeta.classList.remove("hidden");
+        tarjetaProfesional.setAttribute("required", "required");
+        btnCultivos.classList.remove("hidden");
+        btnPlagas.classList.remove("hidden");
+      } else {
+        tarjetaProfesional.classList.add("hidden");
+        labelTarjeta.classList.add("hidden");
+        tarjetaProfesional.removeAttribute("required");
+        btnCultivos.classList.add("hidden");
+        btnPlagas.classList.add("hidden");
+      }
+    });
+    document.querySelectorAll("form").forEach(form => {
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        if(form.id === "formLugares"){
+          const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+          let allChecked = true;
+          checkboxes.forEach(box => {
+            if (!box.checked) allChecked = false;
+          });
+          if (!allChecked) {
+            alert("Debe marcar todas las áreas identificadas obligatorias para inspección.");
+            return;
+          }
+        }
+        alert("Registro guardado correctamente (simulación).");
+        form.reset();
+        if(form.id === "formUsuarios"){
+          tarjetaProfesional.classList.add("hidden");
+          labelTarjeta.classList.add("hidden");
+          btnCultivos.classList.add("hidden");
+          btnPlagas.classList.add("hidden");
+        }
+      });
+    });
+  
+    // ===== Funciones para almacenamiento y visualización de informes en LocalStorage =====
+    /**
+     * guardarInformeLocal(informe)
+     * Guarda un objeto 'informe' en el arreglo 'informesFitosanitarios' de LocalStorage.
+     */
+    function guardarInformeLocal(informe) {
+      const key = 'informesFitosanitarios';
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      arr.push(informe);
+      localStorage.setItem(key, JSON.stringify(arr));
+    }
+
+    /**
+     * obtenerInformesLocal()
+     * Retorna el arreglo de informes guardados (o arreglo vacío si no hay ninguno).
+     */
+    function obtenerInformesLocal() {
+      return JSON.parse(localStorage.getItem('informesFitosanitarios') || '[]');
+    }
+
+    /**
+     * mostrarInformes()
+     * Carga los informes desde LocalStorage y los muestra en la tabla del panel administrador.
+     * Muestra todos los campos registrados por el formulario.
+     */
+    function mostrarInformes() {
+      const tbody = document.querySelector('#tablaInformesAdmin tbody') || document.querySelector('#tablaInformes tbody');
+      if(!tbody) return;
+      tbody.innerHTML = '';
+      const informes = obtenerInformesLocal();
+      if (informes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:12px;">No hay informes registrados</td></tr>';
+        return;
+      }
+      informes.forEach((inf, i) => {
+        const tr = document.createElement('tr');
+        const plagasTxt = (inf.plagas || []).map(p => `${p.nombre} (${p.cantidad} plantas, ${p.porcentaje}%)`).join('<br>');
+        tr.innerHTML = `
+          <td style="padding:8px; border:1px solid #a5d6a7;">${i+1}</td>
+          <td style="padding:8px; border:1px solid #a5d6a7;">${inf.lote || ''}</td>
+          <td style="padding:8px; border:1px solid #a5d6a7;">${inf.especie || ''}</td>
+          <td style="padding:8px; border:1px solid #a5d6a7;">${inf.area || ''}</td>
+          <td style="padding:8px; border:1px solid #a5d6a7;">${inf.plantas || ''}</td>
+          <td style="padding:8px; border:1px solid #a5d6a7;">${inf.estado || ''}</td>
+          <td style="padding:8px; border:1px solid #a5d6a7;">${plagasTxt}</td>
+          <td style="padding:8px; border:1px solid #a5d6a7;">${inf.fecha || ''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    /**
+     * borrarInformes()
+     * Elimina todos los informes del LocalStorage y refresca la tabla.
+     */
+    function borrarInformes() {
+      if (confirm('¿Seguro que deseas eliminar todos los informes guardados?')) {
+        localStorage.removeItem('informesFitosanitarios');
+        mostrarInformes();
+        alert('Todos los informes han sido eliminados.');
+      }
+    }
+
+    // Si existe el formulario de informes, interceptamos su envío para guardar en LocalStorage
+    (function() {
+      const form = document.getElementById('formInformes');
+      if (!form) return;
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Construir el objeto informe con todos los campos del formulario
+        const informe = {};
+        // Campos básicos
+        informe.lote = document.getElementById('loteInforme') ? document.getElementById('loteInforme').value : '';
+        informe.especie = document.getElementById('especieVegetalInforme') ? document.getElementById('especieVegetalInforme').value : '';
+        informe.area = document.getElementById('areaInforme') ? document.getElementById('areaInforme').value : '';
+        informe.plantas = document.getElementById('cantidadPlantas') ? document.getElementById('cantidadPlantas').value : '';
+        informe.estado = document.getElementById('estadoFenologico') ? document.getElementById('estadoFenologico').value : '';
+        // Plagas: recolectar todos los bloques dentro de #plagasInformesSection
+        informe.plagas = [];
+        const plagasNodes = document.querySelectorAll('#plagasInformesSection .plaga-inf, #plagasInformesSection div');
+        plagasNodes.forEach(node => {
+          const nombreEl = node.querySelector('.plagaNombre') || node.querySelector('input[type="text"]');
+          const cantidadEl = node.querySelector('.plagaCantidad') || node.querySelector('input[type="number"]');
+          const porcentajeEl = node.querySelector('.plagaPorcentaje') || null;
+          const nombre = nombreEl ? nombreEl.value : '';
+          const cantidad = cantidadEl ? cantidadEl.value : '';
+          const porcentaje = porcentajeEl ? porcentajeEl.value : '';
+          if (nombre || cantidad || porcentaje) {
+            informe.plagas.push({ nombre: nombre || '', cantidad: cantidad || '', porcentaje: porcentaje || '' });
+          }
+        });
+        // Fecha y hora de registro
+        informe.fecha = new Date().toLocaleString();
+        // Guardar en LocalStorage
+        guardarInformeLocal(informe);
+        // Feedback y limpiar formulario
+        alert('✅ Informe guardado correctamente.');
+        form.reset();
+      });
+    })();
+    </script>
+</body>
+</html>
