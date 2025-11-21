@@ -1,9 +1,4 @@
 
--- =======================================================
---  ICA — Esquema Oracle 10g (DDL + secuencias + disparadores)
---  Autor: ChatGPT
---  Nota: Ajusta tamaños de VARCHAR2 según tus necesidades.
--- =======================================================
 
 -- Limpieza segura (ignora errores si objetos no existen)
 BEGIN EXECUTE IMMEDIATE 'DROP TABLE DETALLE_INFORME_PLAGA CASCADE CONSTRAINTS'; EXCEPTION WHEN OTHERS THEN NULL; END;
